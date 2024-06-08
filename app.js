@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 
     res.render('index', { title: "Chess Game" })
 
-})
+}) 
 
 io.on('connection', function (uniquesocket) {
     
@@ -45,10 +45,12 @@ io.on('connection', function (uniquesocket) {
     ///---> if a  player leaves the game 
     uniquesocket.on('disconnect', function () {
 
-        if (uniquesocket.id === players.white) {
+        if (uniquesocket.id === players.white) 
+        {
             delete players.white;
         }
-        else if (uniquesocket.id === players.black) {
+        else if (uniquesocket.id === players.black)
+        {
             delete players.black;
         }
         // if (uniquesocket.id === players.white || uniquesocket.id === players.black) 
@@ -56,29 +58,32 @@ io.on('connection', function (uniquesocket) {
         //     delete players.white;
         //     delete players.black;
         // }
-        uniquesocket.on('move', function (move) {
-            try {
-                if (chess.turn() === 'w' && uniquesocket.id !== players.white) return;
-                if (chess.turn() === 'b' && uniquesocket.id !== players.black) return;
-                
-                const result = chess.move(move);
-                
-                if (result) {
-                    currentPlayer = chess.turn();
-                    io.emit('move', move);
-                    io.emit('boardState', chess.fen())
-                }
-                else {
-                    console.log('Invalid move : ', move)
-                    uniquesocket.emit('Invalid move : ', move)
-                }
+    })
+    
+    uniquesocket.on('move', function (move) {
+            
+        try {
+
+            if (chess.turn() === 'w' && uniquesocket.id !== players.white) return;
+            if (chess.turn() === 'b' && uniquesocket.id !== players.black) return;
+            
+            const result = chess.move(move);
+            
+            if (result) {
+                currentPlayer = chess.turn();
+                io.emit('move', move);
+                io.emit('boardState', chess.fen())
             }
-            catch (error) {
-                console.log(error)
+            else {
+                console.log('Invalid move : ', move)
                 uniquesocket.emit('Invalid move : ', move)
             }
-        })
 
+        }
+        catch (error) {
+            console.log(error)
+            uniquesocket.emit('Invalid move : ', move)
+        }
     })
 
 })

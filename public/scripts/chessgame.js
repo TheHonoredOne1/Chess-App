@@ -1,7 +1,7 @@
 const socket = io();
 
 const chess = new Chess();
-
+ 
 const boardElement = document.querySelector('.chessboard')
 
 let draggedPiece = null;
@@ -13,11 +13,8 @@ const renderBoard = () => {
     const board = chess.board();
     boardElement.innerHTML = "";
     board.forEach((row, rowindex) => {
-
         row.forEach((square, squareindex) => {
-
             const squareElement = document.createElement('div');
-
             squareElement.classList.add(
                 "square",
                 ((rowindex + squareindex) % 2 === 0) ? ("light") : ("dark")
@@ -31,11 +28,12 @@ const renderBoard = () => {
                 pieceElement.classList.add("piece", square.color === "w" ? "white" : "black")
                 pieceElement.innerText = getPieceUnicode(square);
                 pieceElement.draggable = (playerRole === square.color);
+                
                 pieceElement.addEventListener("dragstart", (event) => {
                     if (pieceElement.draggable) {
                         draggedPiece = pieceElement
                         sourceSquare = { row: rowindex, col: squareindex }
-                        event.dataTransfer.setData('text/plain', "")
+                        event.dataTransfer.setData("text/plain", "")
                     }
                 });
                 pieceElement.addEventListener("dragend", (event) => {
@@ -58,10 +56,9 @@ const renderBoard = () => {
                     }
                     handleMove(sourceSquare, targetSource);
                 }
-            })
+            });
             boardElement.appendChild(squareElement);
-        })
-
+        });
 
     });
 
@@ -71,12 +68,10 @@ const renderBoard = () => {
     else {
         boardElement.classList.remove('flipped')
     }
-
-
 };
 
 
-const handleMove = () => {
+const handleMove = (source, target) => {
     const move = {
         from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
         to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
@@ -101,9 +96,9 @@ const getPieceUnicode = (piece) => {
         b: "♝",
         q: "♛",
         k: "♚",
-    }
+    };
     return unicodePieces[piece.type] || "";
-}
+};
 // getPieceUnicode()
 
 socket.on('playerRole', function (role) {
